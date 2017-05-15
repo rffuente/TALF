@@ -1,0 +1,89 @@
+\documentclass[spanish, fleqn]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{bm}
+\usepackage{tikz}
+\usetikzlibrary{automata,positioning}
+\usepackage{adjustbox}
+\usepackage[top=2.5cm, bottom=2cm, left=2cm, right=2cm]{geometry}
+\author{
+	 Roberto Fuentes - 201173037-2 \\
+	Casa Central\\
+	}
+\title{
+\textbf{Introducción a la Informática Teórica}\\
+Tarea 0\\
+1do semestre, 2017 
+}
+\begin{document}
+\maketitle
+
+
+%\subtitle{\textbf{Desarrollo}}\\
+%--------------------------------------------------------------------------------------------------------------------------------------------------------------------%
+\section*{Pregunta 1}
+
+ Nos piden primero una expresión regular que acepte el lenguaje de las direcciones url, explicando la construcción de esta, y que acepte conexiones de tipo \textit{\textbf{http}} y \textit{\textbf{https}}. Para esto, primero partiremos la RE con la secuencia \textbf{http}, seguido de "(s $\mid\epsilon$)" para poder formar la secuencia principal de la url. Seguido de esto, viene la secuencia "://", y posteriormente debe ir "www" es decir, "(www)".Asumiremos como supuesto de que las direcciones deben comenzar con "www" .  Luego, definiremos el alfabeto "$\alpha$" para denotar las \textcolor{red}{letras del abecedario} (a,b,c,\ldots,z,A,B,\ldots,Z) y "$\beta$" para denotar los \textcolor{blue}{números} (0,1,2,\ldots,9). Puede ir un punto seguido de alguno de estos simbolos como puede ir ninguno también, por lo que quedaria como "$(\text{.}$($\alpha\mid\beta$)$^{+})^*$".
+ Luego de esto debe ir un ".", seguido de un dominio que si o si debe existir, por lo que este quedaria posteriormente ".($\alpha$)$^{+}$". Finalmente, definiremos el alfabeto $\sigma$ , el cual definira \textcolor{green}{simbolos de los caracteres ASCII} (".",";","\{"\&"\}",$/$,etc). Puede entonces haber un "/" seguido de una sequencia de letras, numeros o simbolos, es decir "\ $\Bigl($ /($\alpha\mid\beta\mid\gamma$)$^{*}$$\mid\epsilon$ $ \Bigl)$".La expresión regular finalmente nos queda entonces como:
+ 
+ 
+ $$\textbf{\textit{RE}: http(s $\mid\epsilon)$ ://www ($(\text{.}$($\alpha\mid\beta$)$^{+})^*$ .($\alpha$)$^+$ $\Bigl($ /($\alpha\mid\beta\mid\gamma$)$^{*}$$\mid\epsilon$ $ \Bigl)$  }$$
+
+El DFA queda entonces de la siguiente manera:
+\newpage
+
+\begin{tikzpicture}[shorten >=1.2pt,node distance=1.6cm,on grid,auto] 
+
+   \node[state,initial,scale=0.85] (q_0)   {$q_0$}; 
+   \node[state,scale=1] (q_1) [below=of q_0] {$q_1$};
+   \node[state,scale=1] (q_2) [below=of q_1] {$q_2$};
+   \node[state,scale=1] (q_3) [below=of q_2] {$q_3$};
+   \node[state,scale=1] (q_4) [below=of q_3] {$q_4$};
+   \node[state,scale=1] (q_5) [below=of q_4] {$q_5$};
+   \node[state,scale=1] (q_6) [below=of q_5] {$q_6$};
+   \node[state,scale=1] (q_7) [below=of q_6] {$q_7$};
+   \node[state,scale=1] (q_8) [below=of q_7] {$q_8$};
+   \node[state,scale=1] (q_9) [below=of q_8] {$q_9$};
+   \node[state,scale=1] (q_10) [below=of q_9] {$q_{10}$};
+   \node[state,scale=1] (q_11) [below=of q_10] {$q_{11}$};
+   \node[state,scale=1] (q_12) [below right=of q_11] {$q_{12}$};
+   \node[state,scale=1] (q_13) [right=of q_12] {$q_{13}$};
+   \node[state,scale=1] (q_14) [below=of q_13] {$q_{14}$};
+   \node[state,scale=1,accepting] (q_15) [right=of q_14] {$q_{15}$};
+   \node[state,scale=1,accepting] (q_16) [right=of q_15] {$q_{16}$};
+   \node[state,scale=1,accepting] (q_17) [right=of q_16] {$q_{17}$};
+ 
+    \path[->] 
+    (q_0) edge  node {\small h} (q_1)
+    (q_1) edge  node {\small t} (q_2)
+    (q_2) edge  node {\small t} (q_3)
+    (q_3) edge  node {\small p} (q_4)
+    (q_4) edge  node {\small s} (q_5)
+    (q_5) edge  node {\small :} (q_6)
+    (q_6) edge  node {\small /} (q_7)
+    (q_7) edge  node {\small /} (q_8)
+    (q_3) edge[bend left=40]  node{\small p}(q_5)
+    (q_8) edge  node {\small w} (q_9)
+    (q_9) edge  node {\small w} (q_10)
+    (q_10) edge  node {\small w} (q_11)
+    (q_11) edge  node {\small .} (q_12)
+    (q_12) edge[bend left=40]  node {\small $\alpha$} (q_13)
+           edge [loop above] node {$\alpha$} ()
+    (q_13) edge[bend left=40]  node {\small $\beta$} (q_12)
+    (q_13) edge  node {\small .} (q_14)
+           edge [loop above] node {$\beta$} ()
+    (q_10) edge[bend left=90]  node {\small w} (q_13)
+    (q_14) edge  node {\small $\alpha$} (q_15)
+    (q_15) edge[bend left=40]  node {\small $\alpha$} (q_16)
+           edge [loop above] node {$\alpha$} ()
+    (q_16) edge[bend left=40]  node {\small $\beta$} (q_17)
+           edge [loop above] node [below] {$\beta$} ()
+    (q_16) edge[bend left=40]  node  [above] {\small $\beta$} (q_15)
+    (q_17) edge[bend left=40]  node  [above] {\small $\gamma$} (q_16)
+           edge [loop above] node {$\gamma$} ()
+    (q_15) edge[bend left=70]  node {\small $\alpha$} (q_17)
+    (q_17) edge[bend left=42]  node [below] {\small $\gamma$} (q_15);
+\end{tikzpicture}
+
+\end{document}
